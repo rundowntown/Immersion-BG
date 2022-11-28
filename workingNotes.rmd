@@ -1,0 +1,14 @@
+---
+title: "Immersion_Notes"
+author: "Daniel Forcade"
+date: "2022-11-28"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Working Notes (11/27/22)
+
+
