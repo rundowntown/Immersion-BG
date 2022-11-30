@@ -22,8 +22,13 @@ import pyautogui
 ## Set interval / Create Program Launch on Stream Deck
 
 
+## Weather API Key from: https://openweathermap.org/
+API_Key = os.environ.get('Weather_API_Key')
+
+
 ## Set Working Directory
 os.chdir('C:\\Users\\dforc\\Desktop\\Immersion-BG')
+
 
 weather = ""
 
@@ -31,7 +36,7 @@ weather = ""
 # Hotkeys
 # =============================================================================
 hotkeyDict = {
-    "default" : "0"
+    "default" : "0",
     "clear" : "1",
     "cloud" : 'a',
     "drizzle" : "3",
@@ -47,10 +52,9 @@ hotkeyDict = {
 def main():
     
     print("This is a test")
+    print(API_Key)
     
-    oldWeather = lastWeather()
-    
-    weather = weatherReport()
+    weather = weatherReport(API_Key)
     
     
     key = weatherConversion(weather)
@@ -76,7 +80,7 @@ def keyPress(key):
 
 
 ## OpenWeather Weather Data (JSON)
-def weatherReport():
+def weatherReport(API_Key):
     """
     This Function can tell you the weather
     --> Calls a openweather API and saves specific weather data
@@ -86,7 +90,7 @@ def weatherReport():
     ## Geocoding : https://openweathermap.org/api/geocoding-api
     
     ## Weather API Key from: https://openweathermap.org/
-    weather_api = "8c274339406a1a13a3ac23d6cd42627d"
+    weather_api = API_Key
     
     lat = '44.4759'
     lon = '-73.2121'
@@ -142,11 +146,12 @@ def weatherConversion(weather):
         weatherKey = hotkeyDict["snow"]
     
     else:                                           ## Default
-        weatherKey = hotKeyDict["default"]
+        weatherKey = hotkeyDict["default"]
         
     return(weatherKey)
 
-def lastWeather(value):
+
+#def lastWeather(value):
     
     
 
