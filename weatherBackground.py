@@ -154,6 +154,14 @@ def weatherConversion(weather):
 #def lastWeather(value):
     
     
+# =============================================================================
+# ## TODO 12/10/22
+# - Check if conditions changed
+# - Trigger without keypress (no interrupt)
+# - autorun and .exe with stream deck icon/app
+# - make background assets
+# =============================================================================
+    
 
 
 # =============================================================================
