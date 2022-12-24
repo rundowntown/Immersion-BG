@@ -16,6 +16,7 @@ import json
 import time
 import schedule
 import pyautogui
+import pandas as pd
 
 ##
 ## 11/28 TODO: Set Hotkeys / Create Backgrounds / Set Continuous Run
@@ -54,6 +55,8 @@ hotkeyDict = {
 def main():
     
     myValue = weatherFileRead()
+    
+    dataCollect()
     print("/n ***", myValue, "\n *** \n")
     
     
@@ -73,7 +76,6 @@ def main():
 
 
 
-
 # =============================================================================
 # Auxillary Functions
 # =============================================================================
@@ -81,7 +83,7 @@ def main():
 
 
 # =============================================================================
-# ## File Handling
+# ## File Handling for Weather State Tracking
 # =============================================================================
 
 def weatherFileRead():
@@ -104,8 +106,21 @@ def weatherFileRead():
     
 
 
-
-
+# =============================================================================
+# ## Data Collection Log 
+# =============================================================================
+def dataCollect():
+    
+    dataFileName = "weatherData.csv"
+    
+    try:
+        myData = pd.read_csv(dataFileName)
+        
+    except FileNotFoundError:
+        
+        print('wowEEEE')
+        
+        
 # =============================================================================
 # ## Key Press Function
 # =============================================================================
