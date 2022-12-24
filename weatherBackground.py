@@ -26,8 +26,10 @@ import pyautogui
 API_Key = os.environ.get('Weather_API_Key')
 
 
-## Set Working Directory
-os.chdir('C:\\Users\\dforc\\Desktop\\Immersion-BG')
+## Set Working Directory From Absolute Path
+abspath = os.path.abspath(__file__)        ## Absolute Path
+dname = os.path.dirname(abspath)           ## Directory Path
+os.chdir(dname)                            ## Set Directory
 
 
 weather = ""
@@ -51,14 +53,23 @@ hotkeyDict = {
 # =============================================================================
 def main():
     
+    myValue = weatherFileRead()
+    print("/n ***", myValue, "\n *** \n")
+    
+    
     print("This is a test")
     print(API_Key)
+    
     
     weather = weatherReport(API_Key)
     
     
     key = weatherConversion(weather)
+    
+    
     keyPress(key)
+    
+    
 
 
 
@@ -67,7 +78,37 @@ def main():
 # Auxillary Functions
 # =============================================================================
 
-## Key Press Function
+
+
+# =============================================================================
+# ## File Handling
+# =============================================================================
+
+def weatherFileRead():
+
+    ## Check if File Already Exists: Read From File
+    try:
+        with open ('..\Immersion-BG\weatherState.txt', encoding = 'utf8') as weatherSaved:
+            myWeather = weatherSaved.read()
+    
+    ## If FIle does not exist, Create New File
+    except FileNotFoundError:
+
+        ## Open/Write fo File
+        with open('..\Immersion-BG\weatherState.txt', 'w', encoding = 'utf8',
+                  newline = '') as weatherSaved:
+            weatherSaved.write('default')
+            myWeather = weatherSaved.read()
+            
+    return myWeather
+    
+
+
+
+
+# =============================================================================
+# ## Key Press Function
+# =============================================================================
 def keyPress(key):
     """
     This function takes in a key generated from weatherConversion()
@@ -79,7 +120,9 @@ def keyPress(key):
 
 
 
-## OpenWeather Weather Data (JSON)
+# =============================================================================
+# ## OpenWeather Weather Data (JSON)
+# =============================================================================
 def weatherReport(API_Key):
     """
     This Function can tell you the weather
@@ -115,8 +158,9 @@ def weatherReport(API_Key):
     return(weatherState)
     
 
-
-## Weather Determination
+# =============================================================================
+# ## Weather Determination Function
+# =============================================================================
 def weatherConversion(weather):
     """
     --> Determines Type of Weather from weatherReport()
@@ -168,6 +212,7 @@ def weatherConversion(weather):
 # Program
 # =============================================================================
 schedule.every(1).seconds.do(main) 
+
 
 main()
 
