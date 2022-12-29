@@ -25,6 +25,7 @@ import pandas as pd
 
 ## Notes 12/28
 ## Create Autoload API w Hidden Key For New Imports or Readme
+## Add Data Collection CSV
 
 ## Weather API Key from: https://openweathermap.org/
 API_Key = os.environ.get('Weather_API_Key')
