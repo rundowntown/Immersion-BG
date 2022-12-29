@@ -23,6 +23,9 @@ import pandas as pd
 ## Set interval / Create Program Launch on Stream Deck
 
 
+## Notes 12/28
+## Create Autoload API w Hidden Key For New Imports or Readme
+
 ## Weather API Key from: https://openweathermap.org/
 API_Key = os.environ.get('Weather_API_Key')
 
