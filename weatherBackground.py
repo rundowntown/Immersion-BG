@@ -18,11 +18,12 @@ import schedule
 import pyautogui
 import pandas as pd
 
-##
+## TODO
 ## 11/28 TODO: Set Hotkeys / Create Backgrounds / Set Continuous Run
 ## Set interval / Create Program Launch on Stream Deck
 
 
+## TODO
 ## Notes 12/28
 ## Create Autoload API w Hidden Key For New Imports or Readme
 ## Add Data Collection CSV
@@ -58,27 +59,29 @@ hotkeyDict = {
 # =============================================================================
 def main():
     
+    ## Get Previous Weather Status 
     myValue = weatherFileRead()
     
+    ## TODO
+    ## Add Skip Feature if weather is unchanged
+    
+    ## Data Logging and  Collection
     dataCollect()
     print("/n ***", myValue, "\n *** \n")
     
-    
+    ## API Key Printout
     print("This is a test")
     print(API_Key)
     
-    
+    ## Get Weather Status
     weather = weatherReport(API_Key)
     
-    
+    ## Convert Weather Status to Type (In Dictionary)
     key = weatherConversion(weather)
     
-    
+    ## Press Key Based on Weather Type
     keyPress(key)
     
-    
-
-
 
 # =============================================================================
 # Auxillary Functions
@@ -94,7 +97,8 @@ def weatherFileRead():
 
     ## Check if File Already Exists: Read From File
     try:
-        with open ('..\Immersion-BG\weatherState.txt', encoding = 'utf8') as weatherSaved:
+        with open ('..\Immersion-BG\weatherState.txt', 
+                   encoding = 'utf8') as weatherSaved:
             myWeather = weatherSaved.read()
     
     ## If FIle does not exist, Create New File
@@ -122,6 +126,11 @@ def dataCollect():
         
     except FileNotFoundError:
         
+        ## TODO
+        ## Create csv and skeleton here
+        ## Break up Timestamp into min/hour/day/month/year
+        ## Track weather state / time / change or not? / etc
+        
         print('wowEEEE')
         
         
@@ -133,9 +142,9 @@ def keyPress(key):
     This function takes in a key generated from weatherConversion()
     Triggers the hotkey to switch background State
     """
-    pyautogui.keyDown("ctrl")
-    pyautogui.press(key)
-    pyautogui.keyUp("ctrl")
+    pyautogui.keyDown("ctrl")     ## Hold Key Down
+    pyautogui.press(key)          ## Single Key Press
+    pyautogui.keyUp("ctrl")       ## Release Held Down Key
 
 
 
