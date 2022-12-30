@@ -90,10 +90,15 @@ def main():
 
 
 # =============================================================================
-# ## File Handling for Weather State Tracking
+# ## File Handling for Weather State Tracking (Previous Value)
 # =============================================================================
-
 def weatherFileRead():
+    '''
+   --> Checks for weatherState.txt
+    %>% Creates weatherState.txt with 'default' if FileNotFound
+    Note: [weatherState.txt saves previous weather state]
+    <-- Returns Previous Weather State
+    '''
 
     ## Check if File Already Exists: Read From File
     try:
@@ -104,8 +109,8 @@ def weatherFileRead():
     ## If FIle does not exist, Create New File
     except FileNotFoundError:
 
-        ## Open/Write fo File
-        with open('..\Immersion-BG\weatherState.txt', 'w', encoding = 'utf8',
+        ## Open/Write fo File (a+ Read/Write/Create Setting)
+        with open('..\Immersion-BG\weatherState.txt', 'a+', encoding = 'utf8',
                   newline = '') as weatherSaved:
             weatherSaved.write('default')
             myWeather = weatherSaved.read()
@@ -130,6 +135,8 @@ def dataCollect():
         ## Create csv and skeleton here
         ## Break up Timestamp into min/hour/day/month/year
         ## Track weather state / time / change or not? / etc
+        
+        
         
         print('wowEEEE')
         
