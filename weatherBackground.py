@@ -137,6 +137,15 @@ def dataCollect():
         ## Track weather state / time / change or not? / etc
         
         
+        ## Date / Time / Weather State / Change Status / 
+        myData = pd.DataFrame({
+            'Weather State': pd.Series(dtype = 'int'),
+            'Date' : pd.Series(dtype = 'int'),
+            'Time' : pd.Series(dtype = 'int'),
+            'Change_Status' : pd.Series(dtype = 'int')
+            })
+        
+        
         
         print('wowEEEE')
         
