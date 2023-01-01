@@ -41,7 +41,8 @@ os.chdir(dname)                            ## Set Directory
 weather = ""
 
 # =============================================================================
-# Hotkeys
+# Hotkeys 
+# Edit Value for Key to change Hotkey
 # =============================================================================
 hotkeyDict = {
     "default" : "0",
@@ -66,7 +67,7 @@ def main():
     ## Add Skip Feature if weather is unchanged
     
     ## Data Logging and  Collection
-    dataCollect()
+    dataFileLoad()
     print("/n ***", myValue, "\n *** \n")
     
     ## API Key Printout
@@ -122,13 +123,21 @@ def weatherFileRead():
 # =============================================================================
 # ## Data Collection Log 
 # =============================================================================
-def dataCollect():
+def dataFileLoad():
+    '''
+    This function checks for and reads in the data log .csv
+    %>% If the file does not exist, it creates a data log skeleton
+    <-- Returns pandas data log dataframe
+    '''
     
+    ## Data File Name
     dataFileName = "weatherData.csv"
     
+    ## Open Data Log .csv File
     try:
         myData = pd.read_csv(dataFileName)
-        
+    
+    ## If file does not exist, create file
     except FileNotFoundError:
         
         ## TODO
@@ -137,17 +146,24 @@ def dataCollect():
         ## Track weather state / time / change or not? / etc
         
         
-        ## Date / Time / Weather State / Change Status / 
+        ## Dataframe Setup
+        ## Weather State / Date / Time / Change Status / Error Status
         myData = pd.DataFrame({
-            'Weather State': pd.Series(dtype = 'int'),
-            'Date' : pd.Series(dtype = 'int'),
-            'Time' : pd.Series(dtype = 'int'),
-            'Change_Status' : pd.Series(dtype = 'int')
+            'Weather_State': pd.Series(dtype = 'str'),
+            'Date' : pd.Series(dtype = 'str'),
+            'Time' : pd.Series(dtype = 'str'),
+            'Change_Status' : pd.Series(dtype = 'str'),
+            'Error_Status' : pd.Series(dtype = 'str')
             })
         
+        ## Set Index Name
+        myData.index.name = "Update_ID"
+        
+        ## Save New Dataframe to CSV
+        myData.to_csv('weatherData.csv', encoding = 'utf8')
         
         
-        print('wowEEEE')
+    return myData
         
         
 # =============================================================================
