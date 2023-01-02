@@ -28,6 +28,10 @@ import pandas as pd
 ## Create Autoload API w Hidden Key For New Imports or Readme
 ## Add Data Collection CSV
 
+## TODO
+## 1/1/23
+## Add Logging Errors for All Errors in Data Log
+
 ## Weather API Key from: https://openweathermap.org/
 API_Key = os.environ.get('Weather_API_Key')
 
@@ -41,7 +45,7 @@ os.chdir(dname)                            ## Set Directory
 weather = ""
 
 # =============================================================================
-# Hotkeys 
+# ## Hotkeys 
 # Edit Value for Key to change Hotkey
 # =============================================================================
 hotkeyDict = {
@@ -52,6 +56,18 @@ hotkeyDict = {
     "thunder" : "4",
     "rain" : "5",
     "snow" : "6"
+    }
+
+
+# =============================================================================
+# ## Data Logging Dictionary
+# =============================================================================
+dataLogDict = {
+    'Weather_State' : '2',
+    'Date' : '4',
+    'Time' : '5',
+    'Change_Status' : '5',
+    'Error_Status' : '6'
     }
 
 
@@ -67,8 +83,12 @@ def main():
     ## Add Skip Feature if weather is unchanged
     
     ## Data Logging and  Collection
-    dataFileLoad()
+    myData = dataFileLoad()
     print("/n ***", myValue, "\n *** \n")
+    
+    myData = myData.append(dataLogDict, ignore_index = True)
+    print(myData)
+    myData.to_csv('weatherData.csv', index = False)
     
     ## API Key Printout
     print("This is a test")
@@ -111,7 +131,7 @@ def weatherFileRead():
     except FileNotFoundError:
 
         ## Open/Write fo File (a+ Read/Write/Create Setting)
-        with open('..\Immersion-BG\weatherState.txt', 'a+', encoding = 'utf8',
+        with open ('..\Immersion-BG\weatherState.txt', 'a+', encoding = 'utf8',
                   newline = '') as weatherSaved:
             weatherSaved.write('default')
             myWeather = weatherSaved.read()
@@ -164,7 +184,14 @@ def dataFileLoad():
         
         
     return myData
-        
+
+
+
+
+
+# =============================================================================
+# ## Data
+# =============================================================================
         
 # =============================================================================
 # ## Key Press Function

@@ -7,9 +7,17 @@ output: pdf_document
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
 ```
 
 ## Working Notes (11/27/22)
 
 #### Hotkey Test 1
 Control+Shift+;+1
+
+```{r data load}
+
+## Load Test Data Log
+myDataLog <- read.csv('weatherData.csv')
+
+```
