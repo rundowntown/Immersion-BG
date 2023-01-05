@@ -109,8 +109,20 @@ def main():
     ## Convert Weather Status to Type (In Dictionary)
     key = weatherConversion(weather)
     
+    ## Keypress Timer Start
+    keydt = datetime.now()
+    keyTime_1 = datetime.timestamp(keydt)
+    
     ## Press Key Based on Weather Type
     keyPress(key)
+    
+    ## Keypress Timer End
+    keydt = datetime.now()
+    keyTime_2 = datetime.timestamp(keydt)
+    
+    ## Keypress total time
+    presstime = keyTime_2 - keyTime_1
+    print("KEYTIME: ", presstime)
     
     dt = datetime.now()
     print("PROGRAM END: ", dt)
