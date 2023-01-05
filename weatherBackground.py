@@ -17,6 +17,7 @@ import time
 import schedule
 import pyautogui
 import pandas as pd
+from datetime import datetime
 
 ## TODO
 ## 11/28 TODO: Set Hotkeys / Create Backgrounds / Set Continuous Run
@@ -76,6 +77,13 @@ dataLogDict = {
 # =============================================================================
 def main():
     
+    dt = datetime.now()
+    print("PROGRAM START: ", dt)
+    
+    ## Timestamp 1
+    ts_1 = datetime.timestamp(dt)
+
+    
     ## Get Previous Weather Status 
     myValue = weatherFileRead()
     
@@ -86,8 +94,9 @@ def main():
     myData = dataFileLoad()
     print("/n ***", myValue, "\n *** \n")
     
+    
+    ## Append and Write Data Log
     myData = myData.append(dataLogDict, ignore_index = True)
-    print(myData)
     myData.to_csv('weatherData.csv', index = False)
     
     ## API Key Printout
@@ -103,6 +112,14 @@ def main():
     ## Press Key Based on Weather Type
     keyPress(key)
     
+    dt = datetime.now()
+    print("PROGRAM END: ", dt)
+    
+    ## Timestamp 2
+    ts_2 = datetime.timestamp(dt)
+    
+    runTime = ts_2 - ts_1
+    print("Program Run Time: ", runTime)
 
 # =============================================================================
 # Auxillary Functions
@@ -186,7 +203,9 @@ def dataFileLoad():
     return myData
 
 
-
+# =============================================================================
+# ## Timestamp Date/Time Handling
+# =============================================================================
 
 
 # =============================================================================
