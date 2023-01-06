@@ -132,12 +132,32 @@ def main():
     
     runTime = ts_2 - ts_1
     print("Program Run Time: ", runTime)
+    
+    timeFunc(weatherReport, API_Key)
 
 # =============================================================================
 # Auxillary Functions
 # =============================================================================
 
-
+# =============================================================================
+# ## Time Function
+# =============================================================================
+def timeFunc(function, value):
+    
+    dtNow = datetime.now()
+    timeStamp_1 = datetime.timestamp(dtNow) 
+    
+    myVal= function(value)
+    
+    dtNow = datetime.now()
+    timeStamp_2 = datetime.timestamp(dtNow)
+    
+    totalTime = timeStamp_2 - timeStamp_1
+    print("TIME FOR %s: " % function, totalTime)
+    
+    print("TIME FUNCTION VALUE TEST: ", myVal)
+    
+    
 
 # =============================================================================
 # ## File Handling for Weather State Tracking (Previous Value)
