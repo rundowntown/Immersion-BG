@@ -104,6 +104,7 @@ dataKeys = {'Weather_State',
             'Change_Status',
             'Error_Status'      
             }
+
 ## Data Logging Dictionary Default Value
 dataLogDefaultVal = "DEFAULT"
 
@@ -118,10 +119,8 @@ dataLogDict = dict.fromkeys(dataKeys, dataLogDefaultVal)
 # =============================================================================
 def main():
         
-    dt = datetime.now()
-    print("PROGRAM START: ", dt)
-    
     ## Program Date and Time Run
+    dateTimeLog()
     
     ##ID
     userID()
@@ -169,61 +168,38 @@ def main():
 # ## User ID Function
 # =============================================================================
 def userID():
-     
-    
+    '''
+    --> Reads in user ID
+    %>% If user ID does not exist, creates ID and file
+    <-- Returns user ID
+    '''
+         
+    ## Check if User ID Exists
     try:
         with open ('..\\Immersion-BG\\userID.txt',
                    encoding = 'utf8') as userID:
             myID = userID.read()
-        
+            
+    ## Create UserID if File Does Not Exist  
     except FileNotFoundError:
         
-        ## Generate Unique User ID String
-        unique_ID = str(uuid.uuid4())
+        ## Generate Unique User ID (As String)
+        myID = str(uuid.uuid4())
         
         with open ('..\\Immersion-BG\\userID.txt', 'a+', encoding = 'utf8',
-                   newline = '') as myID:
-            myID.write(unique_ID)
+                   newline = '') as userID:
+            userID.write(myID)
+            
+    return myID
             
     
-
-
-
-# =============================================================================
-# ## Time Function
-# =============================================================================
-def timeFunc(function, value):
-    
-    ## Get Function Name
-    functionName = function.__name__
-    
-    ## Start Time
-    startProcessClock = time.process_time()   ## Process Time
-    startTimeClock = time.time()              ## Clock Time
-    
-    ## Function Run
-    myVal= function(value)
-    
-    ## End Time
-    processClockTotal = time.process_time() - startProcessClock
-    timeClockTotal = time.time() - startTimeClock
-    
-    print("%s Process Time: " % functionName, processClockTotal)
-    print("%s Clock Time: " % functionName, timeClockTotal)
-
-    
-    print("TIME FUNCTION VALUE TEST: ", myVal)
-    
-    
-
 # =============================================================================
 # ## File Handling for Weather State Tracking (Previous Value)
 # =============================================================================
 def weatherFileRead():
     '''
-    --> Checks for weatherState.txt
+    --> Checks for previous Weather State
     %>% Creates weatherState.txt with 'default' if FileNotFound
-    Note: [weatherState.txt saves previous weather state]
     <-- Returns Previous Weather State
     '''
 
@@ -246,6 +222,49 @@ def weatherFileRead():
     
 
 
+# =============================================================================
+# ## Time Function
+# =============================================================================
+## TODO 1/7/23
+## Save Time Values In Correct Dict Location
+ 
+def timeFunc(function, value):
+    
+    ## Get Function Name
+    functionName = function.__name__
+    
+    ## Start Time
+    startProcessClock = time.process_time()   ## Process Time
+    startTimeClock = time.time()              ## Clock Time
+    
+    ## Function Run
+    myVal= function(value)
+    
+    ## End Time
+    processClockTotal = time.process_time() - startProcessClock
+    timeClockTotal = time.time() - startTimeClock
+    
+    print("%s Process Time: " % functionName, processClockTotal)
+    print("%s Clock Time: " % functionName, timeClockTotal)
+
+    
+    print("TIME FUNCTION VALUE TEST: ", myVal)
+    
+
+
+
+# =============================================================================
+# ## Date and Time Log
+# =============================================================================
+def dateTimeLog():
+    
+    dt = datetime.now()
+    dataLogDict['Date'] = dt.date()
+    dataLogDict['Time'] = dt.time().replace(microsecond=0)
+    
+    
+    
+    
 # =============================================================================
 # ## Data Collection Log 
 # =============================================================================
@@ -298,15 +317,7 @@ def dataFileLoad():
     return myData
 
 
-# =============================================================================
-# ## Timestamp Date/Time Handling
-# =============================================================================
 
-
-# =============================================================================
-# ## Data
-# =============================================================================
-        
 # =============================================================================
 # ## Key Press Function
 # =============================================================================
