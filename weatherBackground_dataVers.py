@@ -14,6 +14,7 @@ import os
 import requests
 import json
 import time
+import uuid
 import schedule
 import pyautogui
 import pandas as pd
@@ -63,24 +64,68 @@ hotkeyDict = {
 # =============================================================================
 # ## Data Logging Dictionary
 # =============================================================================
-dataLogDict = {
-    'Weather_State' : '2',
-    'Date' : '4',
-    'Time' : '5',
-    'Change_Status' : '5',
-    'Error_Status' : '6'
-    }
+
+# default_val = 'DEFAULT'
+# dataLogDict = {
+#     'Weather_State' : default_val,
+#     'Date' : default_val,
+#     'Time' : default_val,
+#     'Program_ProcessTime' : 'DEFAULT',
+#     'Program_ClockTime '
+#     'Change_Status' : 'DEFAULT',
+#     'Error_Status' : 'DEFAULT'
+#     }
+
+
+
+
+#             'Weather_State': pd.Series(dtype = 'str'),
+#             'Date' : pd.Series(dtype = 'str'),
+#             'Time' : pd.Series(dtype = 'str'),
+#             'Program_ProcessTime' : pd.Series(dtype = 'str'),
+#             'Program_ClockTime' : pd.Series(dtype = 'str'),
+#             'weatherReport_ProcessTime' : pd.Series(dtype = 'str'),
+#             'weatherReport_ClockTime' : pd.Series(dtype = 'str'),
+#             'hotKeyPress_ProcessTime' : pd.Series(dtype = 'str'),
+#             'hotKeyPress_ClockTime' : pd.Series(dtype = 'str'),
+#             'Change_Status' : pd.Series(dtype = 'str'),
+#             'Error_Status' : pd.Series(dtype = 'str')
+
+## Data Logging Dictionary Key Set
+dataKeys = {'Weather_State', 
+            'Date',
+            'Time',
+            'Program_ProcessTime',
+            'Program_ClockTime',
+            'weatherReport_ProcessTime',
+            'weatherReport_ClockTime',
+            'hotKeyPress_ProcessTime',
+            'hotKeyPress_ClockTime',
+            'Change_Status',
+            'Error_Status'      
+            }
+## Data Logging Dictionary Default Value
+dataLogDefaultVal = "DEFAULT"
+
+## Data Logging Dictionary
+dataLogDict = dict.fromkeys(dataKeys, dataLogDefaultVal)
+
+
 
 
 # =============================================================================
 # Main 
 # =============================================================================
 def main():
-    
+        
     dt = datetime.now()
     print("PROGRAM START: ", dt)
     
+    ## Program Date and Time Run
     
+    ##ID
+    userID()
+
     ## Get Previous Weather Status 
     myValue = weatherFileRead()
     
@@ -105,11 +150,13 @@ def main():
     
     ## Convert Weather Status to Type (In Dictionary)
     key = weatherConversion(weather)
- 
+    
     
     ## Press Key Based on Weather Type
     keyPress(key)
-
+    
+    
+    timeFunc(weatherReport, API_Key)
     
 
 # =============================================================================
@@ -117,6 +164,56 @@ def main():
 # =============================================================================
 
 
+
+# =============================================================================
+# ## User ID Function
+# =============================================================================
+def userID():
+     
+    
+    try:
+        with open ('..\\Immersion-BG\\userID.txt',
+                   encoding = 'utf8') as userID:
+            myID = userID.read()
+        
+    except FileNotFoundError:
+        
+        ## Generate Unique User ID String
+        unique_ID = str(uuid.uuid4())
+        
+        with open ('..\\Immersion-BG\\userID.txt', 'a+', encoding = 'utf8',
+                   newline = '') as myID:
+            myID.write(unique_ID)
+            
+    
+
+
+
+# =============================================================================
+# ## Time Function
+# =============================================================================
+def timeFunc(function, value):
+    
+    ## Get Function Name
+    functionName = function.__name__
+    
+    ## Start Time
+    startProcessClock = time.process_time()   ## Process Time
+    startTimeClock = time.time()              ## Clock Time
+    
+    ## Function Run
+    myVal= function(value)
+    
+    ## End Time
+    processClockTotal = time.process_time() - startProcessClock
+    timeClockTotal = time.time() - startTimeClock
+    
+    print("%s Process Time: " % functionName, processClockTotal)
+    print("%s Clock Time: " % functionName, timeClockTotal)
+
+    
+    print("TIME FUNCTION VALUE TEST: ", myVal)
+    
     
 
 # =============================================================================
@@ -124,7 +221,7 @@ def main():
 # =============================================================================
 def weatherFileRead():
     '''
-   --> Checks for weatherState.txt
+    --> Checks for weatherState.txt
     %>% Creates weatherState.txt with 'default' if FileNotFound
     Note: [weatherState.txt saves previous weather state]
     <-- Returns Previous Weather State
@@ -132,7 +229,7 @@ def weatherFileRead():
 
     ## Check if File Already Exists: Read From File
     try:
-        with open ('..\Immersion-BG\weatherState.txt', 
+        with open ('..\\Immersion-BG\\weatherState.txt', 
                    encoding = 'utf8') as weatherSaved:
             myWeather = weatherSaved.read()
     
@@ -140,7 +237,7 @@ def weatherFileRead():
     except FileNotFoundError:
 
         ## Open/Write fo File (a+ Read/Write/Create Setting)
-        with open ('..\Immersion-BG\weatherState.txt', 'a+', encoding = 'utf8',
+        with open ('..\\Immersion-BG\\weatherState.txt', 'a+', encoding = 'utf8',
                   newline = '') as weatherSaved:
             weatherSaved.write('default')
             myWeather = weatherSaved.read()
@@ -181,6 +278,12 @@ def dataFileLoad():
             'Weather_State': pd.Series(dtype = 'str'),
             'Date' : pd.Series(dtype = 'str'),
             'Time' : pd.Series(dtype = 'str'),
+            'Program_ProcessTime' : pd.Series(dtype = 'str'),
+            'Program_ClockTime' : pd.Series(dtype = 'str'),
+            'weatherReport_ProcessTime' : pd.Series(dtype = 'str'),
+            'weatherReport_ClockTime' : pd.Series(dtype = 'str'),
+            'hotKeyPress_ProcessTime' : pd.Series(dtype = 'str'),
+            'hotKeyPress_ClockTime' : pd.Series(dtype = 'str'),
             'Change_Status' : pd.Series(dtype = 'str'),
             'Error_Status' : pd.Series(dtype = 'str')
             })
