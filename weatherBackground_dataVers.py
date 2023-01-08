@@ -21,10 +21,16 @@ import pyautogui
 import pandas as pd
 from datetime import datetime
 
+## Set AutoGUI Failsafe to 0 for Speed Increase on keyPress
+pyautogui.PAUSE = 0
+
+## Log Program Start Time
+startProcessClock = time.process_time()   ## Process Time
+startTimeClock = time.time()              ## Clock Time
+
 ## TODO
 ## 11/28 TODO: Set Hotkeys / Create Backgrounds / Set Continuous Run
 ## Set interval / Create Program Launch on Stream Deck
-
 
 ## TODO
 ## Notes 12/28
@@ -69,8 +75,7 @@ dataKeys = {'Date',
             'UserID',
             'Program_ProcessTime',
             'Program_ClockTime',
-            'Change_Status',
-            'Error_Status'      
+            'Change_Status'    
             }
 
 ## Data Logging Dictionary Default Value
@@ -87,11 +92,14 @@ userFileName = 'userID.txt'
 weatherFileName = 'weatherState.txt'
 dataLogFileName = 'weatherData.csv'
 
-#%%
+
 # =============================================================================
-# Main 
+# ## Main 
 # =============================================================================
 def main():
+    
+    ## Main Start Time Log [Process and Clock]                 [Run Time Start]
+
         
     ## Date and Time of Program Launch                         [Date/Time]
     dateTimeLog()
@@ -108,26 +116,26 @@ def main():
     ## Update Saved Weather for Previous Tracking              [Prev. W Update]
     weatherPreviousWrite(weatherFileName, weather)
     
-    ## TODO
-    ## Add Skip Feature if weather is unchanged
+    ## Weather Change Handling                                 [Weather Key]
+    weatherChange(weather, previousWeather)
     
+    
+    ## Total Run Time for Main                                 [Run Time End]
+    mainTime(startProcessClock, startTimeClock)
+ 
     ## Data Logging and  Collection                            [Open Data Log]
     myData = dataFileLoad(dataLogFileName)
-
-
-    ## Convert Weather Status to Type (In Dictionary)
-    key = weatherConversion(weather)
     
-    
-    ## Press Key Based on Weather Type
-    timeFunc(keyPress)
-    
-    ## Append and Write Data Log
+    ## Append and Write Data Log                               [Data Write]
     dataLogWrite(myData)
     
 
-#%%%% Functions
-#%%%
+# =============================================================================
+# 
+# ---- Functions ----
+#
+# =============================================================================
+
 # =============================================================================
 # ## Date and Time of Program Ran
 # =============================================================================
@@ -139,7 +147,7 @@ def dateTimeLog():
     dataLogDict['Date'] = dt.date()                          ## Save Date
     dataLogDict['Time'] = dt.time().replace(microsecond=0)   ## Save Time
 
-#%%
+
 # =============================================================================
 # ## User ID Load/Create Function
 # =============================================================================
@@ -173,7 +181,7 @@ def userID(userFileName):
             
     return myID
             
-#%%
+
 # =============================================================================
 # ## Previous Weather State Tracking
 # =============================================================================
@@ -209,11 +217,11 @@ def weatherPreviousRead(weatherStateFileName):
     return myPreviousWeather
 
 
-#%%
 # =============================================================================
 # ## Update Saved Previous Weather to Current
 # =============================================================================
 def weatherPreviousWrite(weatherStateFileName, weatherState):
+    'This function Saves (Writes) the Recently Updated Weather in a text file'
     
     ## Filepath from directory path + fileName
     filePath =  dirPath + "\\" + weatherStateFileName
@@ -223,7 +231,6 @@ def weatherPreviousWrite(weatherStateFileName, weatherState):
         weatherSaved.write(weatherState)
 
 
-#%%
 # =============================================================================
 # ## Process/Timer of Function Logger
 # =============================================================================
@@ -254,9 +261,47 @@ def timeFunc(function, value = ''):
     dataLogDict[functionName + '_ClockTime'] = timeClockTotal
     
     return myVal
+
+
+# =============================================================================
+# ## Main Program Timer
+# =============================================================================
+def mainTime(startProcessClock, startTimeClock ):
+    
+    ## Total Run Time for Process and Time
+    processClockTotal = round(time.process_time() - startProcessClock, 5)
+    timeClockTotal = round(time.time() - startTimeClock, 5)
+    
+    ## Update Data Log Dictionary
+    dataLogDict['Program_ProcessTime'] = processClockTotal
+    dataLogDict['Program_ClockTime'] = timeClockTotal
     
 
-#%% 
+# =============================================================================
+# ## Weather Change Handling Function
+# =============================================================================
+def weatherChange(weather, previousWeather):
+    '''
+    This function converts weather to weatherKey and triggers hotkey
+    %>% Calls weatherConversion() for Key
+    %>% Presses Hotkey attached to Weather
+    %>% Determines If Change In Weather Occured
+    '''
+    
+    ## Convert Weather to Associated Hotkey Action
+    myKey = timeFunc(weatherConversion, weather)
+    
+    ## Press Hotkey
+    timeFunc(keyPress, myKey)
+    
+    ## Weather Change Status
+    if weather != previousWeather:
+        dataLogDict['Change_Status'] = "Yes"
+    else:
+        dataLogDict['Change_Status'] = "No"
+        
+
+
 # =============================================================================
 # ## Data Collection Log 
 # =============================================================================
@@ -287,8 +332,7 @@ def dataFileLoad(dataFile):
             'UserID' : pd.Series(dtype = 'str'),
             'Program_ProcessTime' : pd.Series(dtype = 'float'),
             'Program_ClockTime' : pd.Series(dtype = 'float'),
-            'Change_Status' : pd.Series(dtype = 'str'),
-            'Error_Status' : pd.Series(dtype = 'str')
+            'Change_Status' : pd.Series(dtype = 'str')
             })
         
         ## Set Index Name
@@ -299,7 +343,7 @@ def dataFileLoad(dataFile):
         
     return myData
 
-#%%
+
 # =============================================================================
 # ## Key Press Function
 # =============================================================================
@@ -313,11 +357,16 @@ def keyPress(key):
     pyautogui.keyUp("ctrl")       ## Release Held Down Key
     
 
-#%%
+
 # =============================================================================
 # ## Write Log Data to CSV Function    
 # =============================================================================
 def dataLogWrite(myData):
+    """
+    %>% Converts Data Log Dictionary to a dataframe
+    %>% Concatenates (Adds) New Data to Existing Dataset
+    %>% Writes File
+    """
     
     ## Convert Log Dict to DataFrame
     dataLogData = pd.DataFrame([dataLogDict], 
@@ -329,7 +378,7 @@ def dataLogWrite(myData):
     myData.to_csv('weatherData.csv', index = False)
     
 
-#%%
+
 # =============================================================================
 # ## OpenWeather Weather Data (JSON) Load
 # =============================================================================
@@ -370,7 +419,7 @@ def weatherReport(API_Key):
     
     return(weatherState)
     
-#%%
+
 # =============================================================================
 # ## Weather Determination Function
 # =============================================================================
@@ -407,7 +456,7 @@ def weatherConversion(weather):
         
     return(weatherKey)
 
-#%%
+    
 # =============================================================================
 # ## TODO 12/10/22
 # - Check if conditions changed
@@ -415,7 +464,7 @@ def weatherConversion(weather):
 # - autorun and .exe with stream deck icon/app
 # - make background assets
 # =============================================================================
-    
+
 main()
 
 
