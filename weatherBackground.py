@@ -38,10 +38,12 @@ API_Key = os.environ.get('Weather_API_Key')
 
 
 ## Set Working Directory From Absolute Path
-abspath = os.path.abspath(__file__)        ## Absolute Path
-dname = os.path.dirname(abspath)           ## Directory Path
-os.chdir(dname)                            ## Set Directory
+absPath = os.path.abspath(__file__)          ## Absolute Path
+dirPath = os.path.dirname(absPath)           ## Directory Path
+os.chdir(dirPath)                            ## Set Directory
 
+print(absPath)
+print(dirPath)
 
 weather = ""
 
@@ -82,7 +84,7 @@ def main():
     
     
     ## Get Previous Weather Status 
-    myValue = weatherFileRead()
+    myValue = weatherFileRead('weatherState.txt')
     
     ## TODO
     ## Add Skip Feature if weather is unchanged
@@ -122,27 +124,30 @@ def main():
 # =============================================================================
 # ## File Handling for Weather State Tracking (Previous Value)
 # =============================================================================
-def weatherFileRead():
+def weatherFileRead(fileName):
     '''
-   --> Checks for weatherState.txt
-    %>% Creates weatherState.txt with 'default' if FileNotFound
-    Note: [weatherState.txt saves previous weather state]
+   --> Takes in Filename >> Checks for File
+    %>% Creates Weather State File with 'default' if FileNotFound
+    Note: [saves previous weather state]
     <-- Returns Previous Weather State
     '''
-
+    
+    ## Filepath from directory path + fileName
+    filePath =  dirPath + "\\" + fileName
+    
     ## Check if File Already Exists: Read From File
     try:
-        with open ('..\Immersion-BG\weatherState.txt', 
-                   encoding = 'utf8') as weatherSaved:
+        with open (filePath, encoding = 'utf8') as weatherSaved:
             myWeather = weatherSaved.read()
     
     ## If FIle does not exist, Create New File
     except FileNotFoundError:
 
         ## Open/Write fo File (a+ Read/Write/Create Setting)
-        with open ('..\Immersion-BG\weatherState.txt', 'a+', encoding = 'utf8',
+        with open (filePath, 'a+', encoding = 'utf8',
                   newline = '') as weatherSaved:
             weatherSaved.write('default')
+            
             myWeather = weatherSaved.read()
             
     return myWeather
