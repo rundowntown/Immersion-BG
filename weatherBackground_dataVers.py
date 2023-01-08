@@ -2,7 +2,7 @@
 """
 Created on Thu Nov 24 00:19:22 2022
 
-## Auto-Update Weather Background v.02
+## Auto-Update Weather Background v.1
 
 @author: dforc
 """
@@ -29,11 +29,8 @@ from datetime import datetime
 ## TODO
 ## Notes 12/28
 ## Create Autoload API w Hidden Key For New Imports or Readme
-## Add Data Collection CSV
 
-## TODO
-## 1/1/23
-## Add Logging Errors for All Errors in Data Log
+
 
 ## Weather API Key from: https://openweathermap.org/
 API_Key = os.environ.get('Weather_API_Key')
@@ -43,12 +40,6 @@ API_Key = os.environ.get('Weather_API_Key')
 absPath = os.path.abspath(__file__)          ## Absolute Path
 dirPath = os.path.dirname(absPath)           ## Directory Path
 os.chdir(dirPath)                            ## Set Directory
-
-print(absPath)
-print(dirPath)
-
-
-weather = ""
 
 # =============================================================================
 # ## Hotkeys 
@@ -64,43 +55,17 @@ hotkeyDict = {
     "snow" : "6"
     }
 
-
 # =============================================================================
 # ## Data Logging Dictionary
 # =============================================================================
-
-# default_val = 'DEFAULT'
-# dataLogDict = {
-#     'Weather_State' : default_val,
-#     'Date' : default_val,
-#     'Time' : default_val,
-#     'Program_ProcessTime' : 'DEFAULT',
-#     'Program_ClockTime '
-#     'Change_Status' : 'DEFAULT',
-#     'Error_Status' : 'DEFAULT'
-#     }
-
-
-
-
-#             'Weather_State': pd.Series(dtype = 'str'),
-#             'Date' : pd.Series(dtype = 'str'),
-#             'Time' : pd.Series(dtype = 'str'),
-#             'Program_ProcessTime' : pd.Series(dtype = 'str'),
-#             'Program_ClockTime' : pd.Series(dtype = 'str'),
-#             'weatherReport_ProcessTime' : pd.Series(dtype = 'str'),
-#             'weatherReport_ClockTime' : pd.Series(dtype = 'str'),
-#             'hotKeyPress_ProcessTime' : pd.Series(dtype = 'str'),
-#             'hotKeyPress_ClockTime' : pd.Series(dtype = 'str'),
-#             'Change_Status' : pd.Series(dtype = 'str'),
-#             'Error_Status' : pd.Series(dtype = 'str')
-
 ## Data Logging Dictionary Key Set
-dataKeys = {'Weather_State', 
-            'Weather_State_Previous',
-            "Temp",
-            'Date',
+dataKeys = {'Date',
             'Time',
+            'Weather_State', 
+            'Weather_State_Previous',
+            'Location',
+            "Temp_F",                         ## Fahrenheit 
+            "Humidity",
             'UserID',
             'Program_ProcessTime',
             'Program_ClockTime',
@@ -109,11 +74,10 @@ dataKeys = {'Weather_State',
             }
 
 ## Data Logging Dictionary Default Value
-dataLogDefaultVal = "DEFAULT"
+dataLogDefaultVal = "EMPTY_DEFAULT"
 
 ## Data Logging Dictionary
 dataLogDict = dict.fromkeys(dataKeys, dataLogDefaultVal)
-
 
 
 # =============================================================================
@@ -123,65 +87,47 @@ userFileName = 'userID.txt'
 weatherFileName = 'weatherState.txt'
 dataLogFileName = 'weatherData.csv'
 
-
+#%%
 # =============================================================================
 # Main 
 # =============================================================================
 def main():
         
-    ## Date and Time of Program Launch
+    ## Date and Time of Program Launch                         [Date/Time]
     dateTimeLog()
     
-    ## Read In or Generate User ID
+    ## Read In or Generate User ID                             [User ID]
     timeFunc(userID, userFileName)
+    
+    ## Get Weather Status                                      [Weather Status]
+    weather = timeFunc(weatherReport, API_Key)
 
-    ## Get Previous Weather Status 
-    myValue = weatherFileRead(weatherFileName)
+    ## Get Previous Weather Status & Save New Weather          [Prev. W Status]
+    previousWeather = timeFunc(weatherPreviousRead, weatherFileName)
+    
+    ## Update Saved Weather for Previous Tracking              [Prev. W Update]
+    weatherPreviousWrite(weatherFileName, weather)
     
     ## TODO
     ## Add Skip Feature if weather is unchanged
     
-    ## Data Logging and  Collection
+    ## Data Logging and  Collection                            [Open Data Log]
     myData = dataFileLoad(dataLogFileName)
-    print("/n ***", myValue, "\n *** \n")
-    
-    
 
-    
-    ## API Key Printout
-    print("This is a test")
-    print(API_Key)
-    
-    ## Get Weather Status
-    weather = timeFunc(weatherReport, API_Key)
-    
+
     ## Convert Weather Status to Type (In Dictionary)
     key = weatherConversion(weather)
     
     
     ## Press Key Based on Weather Type
-    keyPress(key)
-    
-    
-    timeFunc(weatherReport, API_Key)
-    
-    print(dataLogDict)
-    
     timeFunc(keyPress)
     
-    
     ## Append and Write Data Log
-    myData = myData.append(dataLogDict, ignore_index = True)
-    myData.to_csv('weatherData.csv', index = False)
+    dataLogWrite(myData)
+    
 
-# =============================================================================
-# Auxillary Functions
-# =============================================================================
-
-
-
-
-
+#%%%% Functions
+#%%%
 # =============================================================================
 # ## Date and Time of Program Ran
 # =============================================================================
@@ -193,9 +139,7 @@ def dateTimeLog():
     dataLogDict['Date'] = dt.date()                          ## Save Date
     dataLogDict['Time'] = dt.time().replace(microsecond=0)   ## Save Time
 
-
-
-
+#%%
 # =============================================================================
 # ## User ID Load/Create Function
 # =============================================================================
@@ -229,12 +173,11 @@ def userID(userFileName):
             
     return myID
             
-    
-
+#%%
 # =============================================================================
-# ## File Handling for Weather State Tracking (Previous Value)
+# ## Previous Weather State Tracking
 # =============================================================================
-def weatherFileRead(weatherStateFileName):
+def weatherPreviousRead(weatherStateFileName):
     '''
    --> Takes in Filename >> Checks for File
     %>% Creates Weather State File with 'default' if FileNotFound
@@ -248,7 +191,7 @@ def weatherFileRead(weatherStateFileName):
     ## Check if File Already Exists: Read From File
     try:
         with open (filePath, encoding = 'utf8') as weatherSaved:
-            myWeather = weatherSaved.read()
+            myPreviousWeather = weatherSaved.read()
     
     ## If FIle does not exist, Create New File
     except FileNotFoundError:
@@ -258,15 +201,29 @@ def weatherFileRead(weatherStateFileName):
                   newline = '') as weatherSaved:
             weatherSaved.write('default')
             
-            myWeather = weatherSaved.read()
+            myPreviousWeather = weatherSaved.read()
+    
+    ## Update Data Log Dictionary
+    dataLogDict['Weather_State_Previous'] = myPreviousWeather
             
-    return myWeather
+    return myPreviousWeather
 
 
+#%%
+# =============================================================================
+# ## Update Saved Previous Weather to Current
+# =============================================================================
+def weatherPreviousWrite(weatherStateFileName, weatherState):
+    
+    ## Filepath from directory path + fileName
+    filePath =  dirPath + "\\" + weatherStateFileName
+    
+    ## Over-Write Previous Weather
+    with open (filePath, 'w+', encoding = 'utf8') as weatherSaved:
+        weatherSaved.write(weatherState)
 
 
-
-
+#%%
 # =============================================================================
 # ## Process/Timer of Function Logger
 # =============================================================================
@@ -296,27 +253,10 @@ def timeFunc(function, value = ''):
     dataLogDict[functionName + '_ProcessTime'] = processClockTotal
     dataLogDict[functionName + '_ClockTime'] = timeClockTotal
     
- 
-    
-
-
-
-    print("%s Process Time: " % functionName, processClockTotal)
-    print("%s Clock Time: " % functionName, timeClockTotal)
-    
-
-    
-    print("TIME FUNCTION VALUE TEST: ", myVal)
-    
     return myVal
     
 
-
-
-
-    
-    
-    
+#%% 
 # =============================================================================
 # ## Data Collection Log 
 # =============================================================================
@@ -333,21 +273,17 @@ def dataFileLoad(dataFile):
     
     ## If file does not exist, create file
     except FileNotFoundError:
-        
-        ## TODO
-        ## Create csv and skeleton here
-        ## Break up Timestamp into min/hour/day/month/year
-        ## Track weather state / time / change or not? / etc
-        
-        
+
         ## Dataframe Setup
         ## Weather State / Date / Time / Change Status / Error Status
         myData = pd.DataFrame({
-            'Weather_State': pd.Series(dtype = 'str'),
-            'Weather_State_Previous' : pd.Series(dtype = 'str'),
-            'Temp' : pd.Series(dtype = 'str'),
             'Date' : pd.Series(dtype = 'str'),
             'Time' : pd.Series(dtype = 'str'),
+            'Weather_State': pd.Series(dtype = 'str'),
+            'Weather_State_Previous' : pd.Series(dtype = 'str'),
+            'Location' : pd.Series(dtype = 'str'),
+            'Temp_F' : pd.Series(dtype = 'float'),
+            'Humidity' : pd.Series(dtype = 'float'),
             'UserID' : pd.Series(dtype = 'str'),
             'Program_ProcessTime' : pd.Series(dtype = 'float'),
             'Program_ClockTime' : pd.Series(dtype = 'float'),
@@ -361,11 +297,9 @@ def dataFileLoad(dataFile):
         ## Save New Dataframe to CSV
         myData.to_csv(dataFile, encoding = 'utf8')
         
-        
     return myData
 
-
-
+#%%
 # =============================================================================
 # ## Key Press Function
 # =============================================================================
@@ -377,9 +311,25 @@ def keyPress(key):
     pyautogui.keyDown("ctrl")     ## Hold Key Down
     pyautogui.press(key)          ## Single Key Press
     pyautogui.keyUp("ctrl")       ## Release Held Down Key
+    
 
+#%%
+# =============================================================================
+# ## Write Log Data to CSV Function    
+# =============================================================================
+def dataLogWrite(myData):
+    
+    ## Convert Log Dict to DataFrame
+    dataLogData = pd.DataFrame([dataLogDict], 
+                               columns = dataLogDict.keys())
+    ## Add New Data to Previous Data
+    myData = pd.concat([myData, dataLogData])
 
+    ## Write to CSV
+    myData.to_csv('weatherData.csv', index = False)
+    
 
+#%%
 # =============================================================================
 # ## OpenWeather Weather Data (JSON) Load
 # =============================================================================
@@ -404,20 +354,23 @@ def weatherReport(API_Key):
     weatherData = json.loads(response.text)
     
     ## Weather Data Info
-    temp = weatherData['main']['temp']                     ## Current Temp
-    tempMin = weatherData['main']['temp_min']              ## Max Temp
-    tempMax = weatherData['main']['temp_max']              ## Min Temp
+    temp = weatherData['main']['temp']                     ## Current Temp [F]
+    tempMin = weatherData['main']['temp_min']              ## Max Temp [F]
+    tempMax = weatherData['main']['temp_max']              ## Min Temp [F]
     humidity = weatherData['main']['humidity']             ## Humidity
     weatherState = weatherData['weather'][0]['main']       ## Weather Condition 
     locName = weatherData['name']                          ## Location Name
     
-    print(weatherData)
     
-    print(weatherState)
+    ## Update Data Log Dictonary
+    dataLogDict['Weather_State'] = weatherState
+    dataLogDict['Temp_F'] = temp                           ## Fahrenheit 
+    dataLogDict['Humidity'] = humidity
+    dataLogDict['Location'] = locName
     
     return(weatherState)
     
-
+#%%
 # =============================================================================
 # ## Weather Determination Function
 # =============================================================================
@@ -454,10 +407,7 @@ def weatherConversion(weather):
         
     return(weatherKey)
 
-
-#def lastWeather(value):
-    
-    
+#%%
 # =============================================================================
 # ## TODO 12/10/22
 # - Check if conditions changed
@@ -466,14 +416,6 @@ def weatherConversion(weather):
 # - make background assets
 # =============================================================================
     
-
-
-# =============================================================================
-# Program
-# =============================================================================
-schedule.every(1).seconds.do(main) 
-
-
 main()
 
 
