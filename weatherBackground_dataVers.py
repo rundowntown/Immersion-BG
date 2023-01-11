@@ -98,9 +98,6 @@ dataLogFileName = 'weatherData.csv'
 # ## Main 
 # =============================================================================
 def main():
-    
-    ## Main Start Time Log [Process and Clock]                 [Run Time Start]
-
         
     ## Date and Time of Program Launch                         [Date/Time]
     dateTimeLog()
@@ -119,7 +116,6 @@ def main():
     
     ## Weather Change Handling                                 [Weather Key]
     weatherChange(weather, previousWeather)
-    
     
     ## Total Run Time for Main                                 [Run Time End]
     mainTime(startProcessClock, startTimeClock)
@@ -145,8 +141,7 @@ def dateTimeLog():
     This function logs date and time, and updates dictionary with values
     '''
     dt = datetime.now()                                      ## Get Datetime
-    print(str(dt))
-    dataLogDict['DateTime'] = str(dt)
+    dataLogDict['DateTime'] = str(dt)                        ## Save DateTime
     dataLogDict['Date'] = dt.date()                          ## Save Date
     dataLogDict['Time'] = dt.time().replace(microsecond=0)   ## Save Time
 
@@ -270,6 +265,7 @@ def timeFunc(function, value = ''):
 # ## Main Program Timer
 # =============================================================================
 def mainTime(startProcessClock, startTimeClock ):
+    'Tracks Entire Program Run Time'
     
     ## Total Run Time for Process and Time
     processClockTotal = round(time.process_time() - startProcessClock, 5)

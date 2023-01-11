@@ -10,10 +10,7 @@ knitr::opts_chunk$set(echo = TRUE)
 library(tidyverse)
 ```
 
-## Working Notes (11/27/22)
-
-#### Hotkey Test 1
-Control+Shift+;+1
+## Working Notes (1/10/23)
 
 ```{r data load}
 
@@ -22,4 +19,15 @@ myDataLog <- read.csv('weatherData.csv')
 
 ## Pyautogui.pause = 0 Change in clock time for keyPress
 .32 / .0014
+```
+
+
+```{r notes1}
+
+## TODO: GUI Handling
+## TODO: requirements.txt / setup for packages
+## TODO: Zipcode / Area Input and openweather geolocation matching
+## TODO: Asset collection
+## TODO: Night/Day?
+
 ```
