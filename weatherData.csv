@@ -1,3 +1,6 @@
 Date,Time,DateTime,Weather_State,Weather_State_Previous,Location,Temp_F,Humidity,UserID,Program_ProcessTime,Program_ClockTime,Change_Status,userID_ProcessTime,userID_ClockTime,weatherReport_ProcessTime,weatherReport_ClockTime,weatherPreviousRead_ProcessTime,weatherPreviousRead_ClockTime,weatherConversion_ProcessTime,weatherConversion_ClockTime,keyPress_ProcessTime,keyPress_ClockTime
 2023-01-10,21:20:23,2023-01-10 21:20:23.907927,Clouds,Clouds,Burlington,17.02,80.0,908b07fc-b184-4463-9c9d-8baf44edc66a,0.03125,0.15426,No,0.0,0.0005,0.01562,0.1493,0.01562,0.0005,0.0,0.0,0.0,0.00397
 2023-01-10,22:56:39,2023-01-10 22:56:39.472122,Clouds,Clouds,Burlington,18.0,73.0,908b07fc-b184-4463-9c9d-8baf44edc66a,0.0,0.36997,No,0.0,0.00298,0.0,0.36154,0.0,0.0005,0.0,0.0,0.0,0.00496
+2023-01-11,01:16:04,2023-01-11 01:16:04.692855,Clouds,Clouds,Burlington,14.68,84.0,908b07fc-b184-4463-9c9d-8baf44edc66a,0.01562,0.23825,No,0.0,0.00051,0.01562,0.23477,0.0,0.00052,0.0,0.0,0.0,0.00245
+2023-01-11,01:16:05,2023-01-11 01:16:05.568353,Clouds,Clouds,Burlington,14.68,84.0,908b07fc-b184-4463-9c9d-8baf44edc66a,0.01562,0.29443,No,0.0,0.0,0.01562,0.29146,0.0,0.0005,0.0,0.0,0.0,0.00198
+2023-01-11,01:16:06,2023-01-11 01:16:06.443367,Clouds,Clouds,Burlington,14.68,84.0,908b07fc-b184-4463-9c9d-8baf44edc66a,0.03125,0.32095,No,0.0,0.0005,0.01562,0.31651,0.0,0.0005,0.0,0.0,0.0,0.00293
