@@ -67,6 +67,7 @@ hotkeyDict = {
 ## Data Logging Dictionary Key Set
 dataKeys = {'Date',
             'Time',
+            'DateTime',
             'Weather_State', 
             'Weather_State_Previous',
             'Location',
@@ -144,6 +145,8 @@ def dateTimeLog():
     This function logs date and time, and updates dictionary with values
     '''
     dt = datetime.now()                                      ## Get Datetime
+    print(str(dt))
+    dataLogDict['DateTime'] = str(dt)
     dataLogDict['Date'] = dt.date()                          ## Save Date
     dataLogDict['Time'] = dt.time().replace(microsecond=0)   ## Save Time
 
@@ -324,6 +327,7 @@ def dataFileLoad(dataFile):
         myData = pd.DataFrame({
             'Date' : pd.Series(dtype = 'str'),
             'Time' : pd.Series(dtype = 'str'),
+            'DateTime' : pd.Series(dtype = 'str'),
             'Weather_State': pd.Series(dtype = 'str'),
             'Weather_State_Previous' : pd.Series(dtype = 'str'),
             'Location' : pd.Series(dtype = 'str'),

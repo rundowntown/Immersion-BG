@@ -20,4 +20,6 @@ Control+Shift+;+1
 ## Load Test Data Log
 myDataLog <- read.csv('weatherData.csv')
 
+## Pyautogui.pause = 0 Change in clock time for keyPress
+.32 / .0014
 ```
