@@ -10,9 +10,7 @@ import sys
 from PyQt5.QtWidgets import QApplication, QDialog, QLabel, QLineEdit, QPushButton, QVBoxLayout
 
 
-'''Zip'''
-class ZipCodeDialog(QDialog):    
-    
+class zipCodeDialog(QDialog):    
     
     ## Initializes ZipCode GUI
     def __init__(self):
@@ -22,14 +20,13 @@ class ZipCodeDialog(QDialog):
         self.zip_label = QLabel("Enter Your 5 Digit Zip Code")  ## Prompt Label
         self.zip_entry = QLineEdit()
         self.submit_button = QPushButton("Submit")              ## Button Label
-        self.submit_button.clicked.connect(self.onSubmit)      ## Click Condit
+        self.submit_button.clicked.connect(self.onSubmit)       ## Click Condit
         layout = QVBoxLayout()                                  ## Box Layout
         layout.addWidget(self.zip_label)
         layout.addWidget(self.zip_entry)
         layout.addWidget(self.submit_button)
         self.setLayout(layout)
-        
-    
+            
     ## Checks Proper Zip Code
     def checkZip(self, zipCode):
         
@@ -40,7 +37,6 @@ class ZipCodeDialog(QDialog):
         
         return True
     
-
     ## Checks Zip Code and Closes GUI if Correct
     def onSubmit(self):
         
@@ -55,10 +51,14 @@ class ZipCodeDialog(QDialog):
             self.zip_entry.setText("")    
             ## Displays Invalid Zip Code Text
             self.zip_entry.setPlaceholderText("Invalid zip code")
+            
 
-
-
-app = QApplication(sys.argv)
-dialog = ZipCodeDialog()
-dialog.exec_()
-zipCode = dialog.zipCode
+# =============================================================================
+# ## Ask User Their Zip Code Function
+# =============================================================================
+def askZipCode():    
+    app = QApplication(sys.argv)
+    dialog = zipCodeDialog()
+    dialog.exec()
+    zipCode = dialog.zipCode
+    return zipCode

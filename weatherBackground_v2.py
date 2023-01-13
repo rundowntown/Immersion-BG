@@ -2,7 +2,10 @@
 """
 Created on Thu Nov 24 00:19:22 2022
 
-## Auto-Update Weather Background v.1
+## Auto-Update Weather Background v2
+
+## 1/13/23
+## Last Edits before ChatGPT Co-pilot Assist
 
 @author: dforc
 """
@@ -23,7 +26,8 @@ import pandas as pd
 import tkinter as tk  ## GUI
 from datetime import datetime
 
-
+## Classes
+import zipHandling
 
 ## Set AutoGUI Failsafe to 0 for Speed Increase on keyPress
 pyautogui.PAUSE = 0
@@ -206,9 +210,9 @@ def zipCode(zipFileName):
             myZip = zipCode.read()
             
     except FileNotFoundError:
-        
         with open (filePath, 'a+', encoding = 'utf8',
                   newline = '') as zipCode:
+            myZip = zipHandling.askZipCode()
             zipCode.write(myZip)
             
     return myZip

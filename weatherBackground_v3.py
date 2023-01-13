@@ -2,7 +2,8 @@
 """
 Created on Thu Nov 24 00:19:22 2022
 
-## Auto-Update Weather Background v.1
+## Auto-Update Weather Background v3
+
 
 @author: dforc
 """
@@ -23,7 +24,8 @@ import pandas as pd
 import tkinter as tk  ## GUI
 from datetime import datetime
 
-
+## Classes
+import zipHandling
 
 ## Set AutoGUI Failsafe to 0 for Speed Increase on keyPress
 pyautogui.PAUSE = 0
@@ -40,7 +42,11 @@ startTimeClock = time.time()              ## Clock Time
 ## Notes 12/28
 ## Create Autoload API w Hidden Key For New Imports or Readme
 
-
+## TODO 1/13/23
+## Add Version tracker in .csv to track runtime changes (.py name)
+## Move some other functions to seperate files?
+## Track other details?
+## Add SQL and/or Database?!?
 
 ## Weather API Key from: https://openweathermap.org/
 API_Key = os.environ.get('Weather_API_Key')
@@ -206,9 +212,9 @@ def zipCode(zipFileName):
             myZip = zipCode.read()
             
     except FileNotFoundError:
-        
         with open (filePath, 'a+', encoding = 'utf8',
                   newline = '') as zipCode:
+            myZip = zipHandling.askZipCode()
             zipCode.write(myZip)
             
     return myZip
