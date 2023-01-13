@@ -15,11 +15,15 @@ import os
 import requests
 import json
 import time
+import re
 import uuid
 import schedule
 import pyautogui
 import pandas as pd
+import tkinter as tk  ## GUI
 from datetime import datetime
+
+
 
 ## Set AutoGUI Failsafe to 0 for Speed Increase on keyPress
 pyautogui.PAUSE = 0
@@ -91,6 +95,7 @@ dataLogDict = dict.fromkeys(dataKeys, dataLogDefaultVal)
 # =============================================================================
 userFileName = 'userID.txt'
 weatherFileName = 'weatherState.txt'
+zipFileName = 'zipCode.txt'
 dataLogFileName = 'weatherData.csv'
 
 
@@ -102,11 +107,17 @@ def main():
     ## Date and Time of Program Launch                         [Date/Time]
     dateTimeLog()
     
-    ## Read In or Generate User ID                             [User ID]
+    ## Read In or Generate User ID and Zip                     [User ID]
     timeFunc(userID, userFileName)
     
+    ## Get User Zip Code                                       [User ZIP]
+    myZip = timeFunc(zipCode, zipFileName)
+    
+    ## Hold User API Variables in List to Pass to API        
+    weatherVariables = [API_Key, myZip]
+    
     ## Get Weather Status                                      [Weather Status]
-    weather = timeFunc(weatherReport, API_Key)
+    weather = timeFunc(weatherReport, weatherVariables)
 
     ## Get Previous Weather Status & Save New Weather          [Prev. W Status]
     previousWeather = timeFunc(weatherPreviousRead, weatherFileName)
@@ -178,7 +189,61 @@ def userID(userFileName):
     dataLogDict['UserID'] = myID
             
     return myID
+
+
+
+# =============================================================================
+# ## User ZIP Code
+# =============================================================================
+def zipCode(zipFileName):
+    
+    ## Set FilePath
+    filePath = dirPath + "\\" + zipFileName
+    
+    ## Check if Zip Code Exists
+    try:
+        with open (filePath, encoding = 'utf8') as zipCode:
+            myZip = zipCode.read()
+            while not bool(re.match("^[0-9]{5}(?:-[0-9]{4})?$", myZip)):
+                myZip = zipGUI()
+                zipCode.write(myZip)
             
+    except FileNotFoundError:
+        
+        with open (filePath, 'a+', encoding = 'utf8',
+                  newline = '') as zipCode:
+            myZip = zipGUI()
+            zipCode.write(myZip)
+            
+    return myZip
+    
+    
+# =============================================================================
+# ## Get User Zip Code    
+# =============================================================================
+def zipGUI():
+    
+    ## Initiate zipCode
+    zipCode = 0
+    
+    ## Loop until usable zip code entered
+    while not bool(re.match("^[0-9]{5}(?:-[0-9]{4})?$", zipCode)):
+        
+        ## Load tkinter
+        root = tk.Tk()
+        root.title('Weather ZIP Code Determination')
+
+        ## Zip GUI 
+        zipLabel = tk.Label(root, text='Enter your zip code:')
+        zipLabel.pack()
+        zipEntry = tk.Entry(root)
+        zipEntry.pack()
+    
+        zipCode = zipEntry.get()
+
+    return zipCode
+
+
 
 # =============================================================================
 # ## Previous Weather State Tracking
@@ -382,7 +447,7 @@ def dataLogWrite(myData):
 # =============================================================================
 # ## OpenWeather Weather Data (JSON) Load
 # =============================================================================
-def weatherReport(API_Key):
+def weatherReport(weatherVariables):
     """
     This Function can tell you the weather
     --> Calls a openweather API and saves specific weather data
@@ -392,12 +457,10 @@ def weatherReport(API_Key):
     ## Geocoding : https://openweathermap.org/api/geocoding-api
     
     ## Weather API Key from: https://openweathermap.org/
-    weather_api = API_Key
-    
-    lat = '44.4759'
-    lon = '-73.2121'
-    url_W = "https://api.openweathermap.org/data/2.5/weather?lat=%s&lon=%s&appid=%s&units=imperial" \
-           % (lat, lon, weather_api)
+    weather_api = weatherVariables[0]
+    zipCode = weatherVariables[1]
+    url_W = f'http://api.openweathermap.org/data/2.5/weather?zip={zipCode},us&appid={weather_api}&units=imperial'
+
             
     response = requests.get(url_W)
     weatherData = json.loads(response.text)
