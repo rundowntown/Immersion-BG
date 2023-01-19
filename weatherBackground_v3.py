@@ -199,7 +199,8 @@ def userID(userFileName):
 
 
 # =============================================================================
-# ## User ZIP Code
+# ## Zip Code
+# -- Imports from zipHandling.py
 # =============================================================================
 def zipCode(zipFileName):
     
@@ -239,7 +240,7 @@ def weatherPreviousRead(weatherStateFileName):
         with open (filePath, encoding = 'utf8') as weatherSaved:
             myPreviousWeather = weatherSaved.read()
     
-    ## If FIle does not exist, Create New File
+    ## If File does not exist, Create New File
     except FileNotFoundError:
 
         ## Open/Write fo File (a+ Read/Write/Create Setting)
